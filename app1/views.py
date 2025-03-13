@@ -198,7 +198,6 @@ TEMPLATE_PATHS = {
     'type4': 'https://piqapi.purpleiq.ai/uploads/EmployeeImage/sulbcont.jpeg',
 }
 
-# Ensure directory exists
 os.makedirs(ID_CARD_SAVE_PATH, exist_ok=True)
 
 def fetch_employee_data(employee_id):
@@ -211,9 +210,13 @@ def fetch_employee_data(employee_id):
             headers=headers,
             json=payload
         )
+        print(f"API Response: {response.status_code}, {response.text}")  # Debugging
+
         if response.status_code == 200:
             data = response.json()
-            return next((emp for emp in data.get('employees', []) if emp['idNumber'] == employee_id), None)
+            employee = next((emp for emp in data.get('employees', []) if emp['idNumber'] == employee_id), None)
+            print(f"Employee Found: {employee}")  # Debugging
+            return employee
     except requests.RequestException as e:
         print(f"API request failed: {e}")
     return None
@@ -233,8 +236,11 @@ def generate_selected_id_cards(request):
                 return JsonResponse({'message': f"Invalid card type: {card_type}"}, status=400)
             
             template_url = TEMPLATE_PATHS[card_type]
+            print(f"Fetching template from: {template_url}")  # Debugging
+
             response = requests.get(template_url)
             if response.status_code != 200:
+                print(f"Failed to fetch template image. Status Code: {response.status_code}")  # Debugging
                 return JsonResponse({'message': 'Template image could not be fetched.'}, status=500)
             
             template_image = Image.open(BytesIO(response.content))
@@ -244,38 +250,58 @@ def generate_selected_id_cards(request):
             for employee_id in employee_ids:
                 employee = fetch_employee_data(employee_id)
                 if not employee:
+                    print(f"No data found for employee ID: {employee_id}")  # Debugging
                     continue
 
                 id_card = template_image.copy()
                 draw = ImageDraw.Draw(id_card)
+
+                # Check if font exists
+                if not os.path.exists(FONT_PATH):
+                    print(f"Font file not found at {FONT_PATH}")  # Debugging
+                    return JsonResponse({'message': 'Font file missing on the server.'}, status=500)
+
                 font = ImageFont.truetype(FONT_PATH, 20)
 
+                # Load employee image if available
                 if employee.get('employeeImage'):
                     try:
-                        response = requests.get(employee['employeeImage'])
-                        if response.status_code == 200:
-                            employee_image = Image.open(BytesIO(response.content))
+                        img_response = requests.get(employee['employeeImage'])
+                        if img_response.status_code == 200:
+                            employee_image = Image.open(BytesIO(img_response.content))
                             employee_image = employee_image.resize((245, 245))
                             id_card.paste(employee_image, (562, 140))
+                        else:
+                            print(f"Failed to load employee image: {employee['employeeImage']}")  # Debugging
                     except Exception as e:
-                        print(f"Error loading employee image for ID {employee_id}: {e}")
+                        print(f"Error loading employee image for ID {employee_id}: {e}")  # Debugging
 
+                # Draw text on ID card
                 draw.text((210, 175), f"{employee['firstname']} {employee['lastname']}", fill="black", font=font)
                 draw.text((210, 230), f"{employee['department']}", fill="black", font=font)
                 draw.text((210, 285), f"{employee['idNumber']}", fill="black", font=font)
                 draw.text((210, 340), f"{employee['nationalId']}", fill="black", font=font)
                 draw.text((210, 390), f"{employee.get('endDate', 'N/A')}", fill="black", font=font)
-                
+
+                # Save the generated ID card
                 output_filename = f"{employee['idNumber']}_id_card.png"
                 output_path = os.path.join(ID_CARD_SAVE_PATH, output_filename)
-                id_card.save(output_path)
-                generated_files.append(output_filename)
-            
+
+                try:
+                    id_card.save(output_path)
+                    print(f"ID Card saved at: {output_path}")  # Debugging
+                    generated_files.append(output_filename)
+                except Exception as e:
+                    print(f"Error saving ID card for {employee_id}: {e}")  # Debugging
+
+            print(f"Generated files: {generated_files}")  # Debugging
             return JsonResponse({'message': 'ID cards generated successfully.', 'files': generated_files})
         
         except Exception as e:
             print("Error:", e)
-            return JsonResponse({'message': 'An error occurred while generating ID cards.'}, status=500)
+            return JsonResponse({'message': f'An error occurred: {str(e)}'}, status=500)
     
     return JsonResponse({'message': 'Invalid request method.'}, status=405)
+
+
 
