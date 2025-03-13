@@ -203,7 +203,6 @@ TEMPLATE_PATHS = {
 # Ensure the ID card folder exists
 os.makedirs(ID_CARD_SAVE_PATH, exist_ok=True)
 
-
 def fetch_employee_data(employee_id):
     """ Fetch employee details from API """
     payload = {
@@ -221,19 +220,13 @@ def fetch_employee_data(employee_id):
             headers=headers,
             json=payload
         )
-
-        print(f"API Response: {response.status_code}, {response.text}")  # Debugging
-
         if response.status_code == 200:
             data = response.json()
             employee = next((emp for emp in data.get('employees', []) if emp['idNumber'] == employee_id), None)
-            print(f"Employee Found: {employee}")  # Debugging
             return employee
     except requests.RequestException as e:
         print(f"API request failed: {e}")
-
     return None
-
 
 @csrf_exempt
 def generate_selected_id_cards(request):
@@ -245,64 +238,67 @@ def generate_selected_id_cards(request):
 
             if not employee_ids:
                 return JsonResponse({'message': 'No employees selected.'}, status=400)
-
+            
             if card_type not in TEMPLATE_PATHS:
                 return JsonResponse({'message': f"Invalid card type: {card_type}"}, status=400)
-
+            
             # Fetch the ID card template
             template_url = TEMPLATE_PATHS[card_type]
             response = requests.get(template_url)
             if response.status_code != 200:
-                print("❌ Error fetching template image:", response.status_code, response.text)
                 return JsonResponse({'message': 'Template image could not be fetched.'}, status=500)
-
+            
             template_image = Image.open(BytesIO(response.content))
-
             generated_files = []
-
-            # ✅ Check if the font file exists
-            print("Font path:", FONT_PATH)
-            print("Font file exists:", os.path.exists(FONT_PATH))
-
-            # Load Font (Fallback if missing)
+            
+            # Load Font
             try:
-                font = ImageFont.truetype(FONT_PATH, 30)
+                font_large = ImageFont.truetype(FONT_PATH, 20)  # Name
+                font_medium = ImageFont.truetype(FONT_PATH, 25)  # Department
+                font_small = ImageFont.truetype(FONT_PATH, 20)  # Other details
             except OSError:
-                print("⚠️ Font not found, using default font.")
-                font = ImageFont.load_default()
+                font_large = font_medium = font_small = ImageFont.load_default()
 
             for employee_id in employee_ids:
                 employee = fetch_employee_data(employee_id)
                 if not employee:
-                    print(f"❌ Employee {employee_id} not found, skipping...")
                     continue
 
                 id_card = template_image.copy()
                 draw = ImageDraw.Draw(id_card)
 
+                # Fetch and add employee image
+                employee_image_url = employee.get('employeeImage', None)
+                if employee_image_url:
+                    try:
+                        img_response = requests.get(employee_image_url)
+                        if img_response.status_code == 200:
+                            emp_img = Image.open(BytesIO(img_response.content))
+                            emp_img = emp_img.resize((245, 245))  # Resize image
+                            id_card.paste(emp_img, (562, 140))  # Position employee image
+                    except Exception as e:
+                        print(f"Error loading employee image: {e}")
+
                 # Draw text on the card
-                draw.text((210, 175), f"{employee.get('firstname', 'N/A')} {employee.get('lastname', '')}", fill="black", font=font)
-                draw.text((210, 230), f"{employee.get('department', 'N/A')}", fill="black", font=font)
-                draw.text((210, 285), f"{employee.get('idNumber', 'N/A')}", fill="black", font=font)
-                draw.text((210, 340), f"{employee.get('nationalId', 'N/A')}", fill="black", font=font)
-                draw.text((210, 390), f"{employee.get('endDate', 'N/A')}", fill="black", font=font)
+                draw.text((210, 175), f"{employee.get('firstname', 'N/A')} {employee.get('lastname', '')}", fill="black", font=font_large)
+                draw.text((210, 230), f"{employee.get('department', 'N/A')}", fill="black", font=font_medium)
+                draw.text((210, 285), f"{employee.get('idNumber', 'N/A')}", fill="black", font=font_small)
+                draw.text((210, 340), f"{employee.get('nationalId', 'N/A')}", fill="black", font=font_small)
+                draw.text((210, 390), f"{employee.get('endDate', 'N/A')}", fill="black", font=font_small)
 
                 # Save the ID card
                 output_filename = f"{employee['idNumber']}_id_card.png"
                 output_path = os.path.join(ID_CARD_SAVE_PATH, output_filename)
-                os.makedirs(ID_CARD_SAVE_PATH, exist_ok=True)
                 id_card.save(output_path)
-
-                print(f"✅ ID Card saved at: {output_path}")
                 generated_files.append(output_filename)
 
             return JsonResponse({'message': 'ID cards generated successfully.', 'files': generated_files})
 
         except Exception as e:
-            print("❌ Error:", e)
             return JsonResponse({'message': 'An error occurred while generating ID cards.'}, status=500)
 
     return JsonResponse({'message': 'Invalid request method.'}, status=405)
+
 
 
 
