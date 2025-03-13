@@ -189,7 +189,7 @@ from io import BytesIO
 from django.conf import settings
 
 # Paths
-DESKTOP_PATH = os.path.join(settings.BASE_DIR, 'app1', 'static', 'app1')
+DESKTOP_PATH = os.path.join(settings.BASE_DIR, 'app1', 'static', 'app1','id cards')
 FONT_PATH = os.path.join(settings.BASE_DIR, 'app1', 'static', 'app1', 'fonts', 'arial.ttf')
 TEMPLATE_PATHS = {
     'type1': os.path.join(settings.BASE_DIR, 'app1', 'static', 'app1','Bahrain Steel Card.PNG'),
