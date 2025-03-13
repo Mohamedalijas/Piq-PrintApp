@@ -266,7 +266,7 @@ def generate_selected_id_cards(request):
 
             # Load Font (Fallback if missing)
             try:
-                font = ImageFont.truetype(FONT_PATH, 20)
+                font = ImageFont.truetype(FONT_PATH, 30)
             except OSError:
                 print("⚠️ Font not found, using default font.")
                 font = ImageFont.load_default()
