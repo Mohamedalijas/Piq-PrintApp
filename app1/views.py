@@ -192,10 +192,10 @@ from django.conf import settings
 DESKTOP_PATH = os.path.join(settings.BASE_DIR, 'app1', 'static', 'app1','id cards')
 FONT_PATH = os.path.join(settings.BASE_DIR, 'app1', 'static', 'app1', 'fonts', 'arial.ttf')
 TEMPLATE_PATHS = {
-    'type1': os.path.join(settings.BASE_DIR, 'app1', 'static', 'app1','Bahrain Steel Card.PNG'),
-    'type2': os.path.join(settings.BASE_DIR, 'app1', 'static', 'app1', 'Contractors Card BS.PNG'),
-    'type3': os.path.join(settings.BASE_DIR, 'app1', 'static', 'app1', 'Foulath Infotech Card.PNG'),
-    'type4': os.path.join(settings.BASE_DIR, 'app1', 'static', 'app1','SULB Card.PNG'),
+    'type1': 'https://piqapi.purpleiq.ai/uploads/EmployeeImage/bahrainsteelCont.jpeg',
+    'type2': 'https://piqapi.purpleiq.ai/uploads/EmployeeImage/bahrainsteelstaff.jpeg',
+    'type3': 'https://piqapi.purpleiq.ai/uploads/EmployeeImage/foulath.jpeg',
+    'type4': 'https://piqapi.purpleiq.ai/uploads/EmployeeImage/sulbcont.jpeg',
 }
 
 def fetch_employee_data(employee_id):
