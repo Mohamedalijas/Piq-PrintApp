@@ -191,7 +191,7 @@ from django.conf import settings
 
 # Paths
 ID_CARD_SAVE_PATH = os.path.join(settings.BASE_DIR, 'app1', 'static', 'app1', 'generated_id_cards')
-FONT_PATH = os.path.join(settings.BASE_DIR, 'app1', 'static', 'app1', 'fonts', 'RedHatDisplay-Bold.ttf')
+FONT_PATH = os.path.join(settings.BASE_DIR, 'app1', 'static', 'app1', 'fonts', 'RedHatDisplay-Medium.ttf')
 
 TEMPLATE_PATHS = {
     'type1': 'https://piqapi.purpleiq.ai/uploads/EmployeeImage/bahrainsteelCont.jpeg',
@@ -253,9 +253,9 @@ def generate_selected_id_cards(request):
             
             # Load Font
             try:
-                font_large = ImageFont.truetype(FONT_PATH, 35)  
-                font_medium = ImageFont.truetype(FONT_PATH, 35)  
-                font_small = ImageFont.truetype(FONT_PATH, 35)  
+                font_large = ImageFont.truetype(FONT_PATH, 20)  
+                font_medium = ImageFont.truetype(FONT_PATH, 20)  
+                font_small = ImageFont.truetype(FONT_PATH, 20)  
             except OSError:
                 font_large = font_medium = font_small = ImageFont.load_default()
 
