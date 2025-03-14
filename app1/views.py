@@ -194,8 +194,8 @@ ID_CARD_SAVE_PATH = os.path.join(settings.BASE_DIR, 'app1', 'static', 'app1', 'g
 FONT_PATH = os.path.join(settings.BASE_DIR, 'app1', 'static', 'app1', 'fonts', 'RedHatDisplay-Medium.ttf')
 
 TEMPLATE_PATHS = {
-    'type1': 'https://piqapi.purpleiq.ai/uploads/EmployeeImage/bahrainsteelCont.jpeg',
-    'type2': 'https://piqapi.purpleiq.ai/uploads/EmployeeImage/bahrainsteelstaff.jpeg',
+    'type1': 'https://piqapi.purpleiq.ai/uploads/EmployeeImage/bahrainsteelstaff.jpeg',
+    'type2': 'https://piqapi.purpleiq.ai/uploads/EmployeeImage/bahrainsteelCont.jpeg',
     'type3': 'https://piqapi.purpleiq.ai/uploads/EmployeeImage/foulath.jpeg',
     'type4': 'https://piqapi.purpleiq.ai/uploads/EmployeeImage/sulbcont.jpeg',
 }
