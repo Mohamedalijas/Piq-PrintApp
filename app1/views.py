@@ -191,7 +191,7 @@ from django.conf import settings
 
 # Paths
 ID_CARD_SAVE_PATH = os.path.join(settings.BASE_DIR, 'app1', 'static', 'app1', 'generated_id_cards')
-FONT_PATH = os.path.join(settings.BASE_DIR, 'app1', 'static', 'app1', 'fonts', 'RedHatDisplay-Bold')
+FONT_PATH = os.path.join(settings.BASE_DIR, 'app1', 'static', 'app1', 'fonts', 'RedHatDisplay-Bold.ttf')
 
 TEMPLATE_PATHS = {
     'type1': 'https://piqapi.purpleiq.ai/uploads/EmployeeImage/bahrainsteelCont.jpeg',
