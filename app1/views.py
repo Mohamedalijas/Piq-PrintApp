@@ -253,9 +253,9 @@ def generate_selected_id_cards(request):
             
             # Load Font
             try:
-                font_large = ImageFont.truetype(FONT_PATH, 20)  # Name
-                font_medium = ImageFont.truetype(FONT_PATH, 25)  # Department
-                font_small = ImageFont.truetype(FONT_PATH, 20)  # Other details
+                font_large = ImageFont.truetype(FONT_PATH, 35)  
+                font_medium = ImageFont.truetype(FONT_PATH, 35)  
+                font_small = ImageFont.truetype(FONT_PATH, 35)  
             except OSError:
                 font_large = font_medium = font_small = ImageFont.load_default()
 
