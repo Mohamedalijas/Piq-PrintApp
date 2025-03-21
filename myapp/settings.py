@@ -9,10 +9,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-7_zm_h$h4$mpq+)j&(u-d!o#f&asrdy-x^eip5i8ibv1s3vt-k'
 
-DEBUG = True
+DEBUG = False
 
 
-ALLOWED_HOSTS = ['printapp12-2.onrender.com','*']
+ALLOWED_HOSTS = ['172.16.100.31','*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
