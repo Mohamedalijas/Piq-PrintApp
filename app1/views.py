@@ -3,7 +3,7 @@ from django.contrib import messages
 import requests
 
 
-LOGIN = 'https://piqapi.purpleiq.ai/api/Authentication/Login'
+LOGIN = 'http://piqapi.foulath.com.bh/api/Authentication/Login'
 
 def login_view(request): 
     if request.method == 'POST':
@@ -40,7 +40,7 @@ def login_view(request):
 
     return render(request, 'app1/login.html')
 
-OTP_API = 'https://piqapi.purpleiq.ai/api/Authentication/TwoFactorAuthentication'
+OTP_API = 'http://piqapi.foulath.com.bh/api/Authentication/TwoFactorAuthentication'
 
 def otp_view(request):
     if request.method == 'POST':
@@ -88,7 +88,7 @@ def otp_view(request):
 
     return render(request, 'app1/otp.html')
 
-RESEND_OTP_API = 'https://piqapi.purpleiq.ai/api/Authentication/ReSendOtpLogin'
+RESEND_OTP_API = 'http://piqapi.foulath.com.bh/api/Authentication/ReSendOtpLogin'
 
 def resend_otp_view(request):
     username = request.session.get('username')  
@@ -156,7 +156,7 @@ def employee_info_view(request):
 
     try:
         response = requests.post(
-            'https://piqapi.purpleiq.ai/api/administrator/Configuration/Employee/EmployeeSummary',
+            'http://piqapi.foulath.com.bh/api/administrator/Configuration/Employee/EmployeeSummary',
             headers=headers,
             json=payload
         )
@@ -216,7 +216,7 @@ def fetch_employee_data(employee_id):
 
     try:
         response = requests.post(
-            'https://piqapi.purpleiq.ai/api/administrator/Configuration/Employee/EmployeeSummary',
+            'http://piqapi.foulath.com.bh/api/administrator/Configuration/Employee/EmployeeSummary',
             headers=headers,
             json=payload
         )
