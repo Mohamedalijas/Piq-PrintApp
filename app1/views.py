@@ -21,19 +21,27 @@ def login_view(request):
 
         try:
             response = requests.post(LOGIN, json=payload, headers=headers, allow_redirects=False)
-            response.raise_for_status()  
-            data = response.json()
+            try:
+                data = response.json()
+            except ValueError:
+                data = {}
+
             print('Response data:', data)
 
-            message = data.get('message', 'Unknown Error')
+            message = data.get('message', '')
 
-            if message and 'Otp' in message:
-                request.session['username'] = username
-                request.session['password'] = password
-                messages.success(request, 'OTP Received Your EMAIL')
-                return redirect('otp')  
+            if response.status_code == 200:
+                if message and 'Otp' in message:
+                    request.session['username'] = username
+                    request.session['password'] = password
+                    messages.success(request, 'OTP sent to your email.')
+                    return redirect('otp')
+                else:
+                    messages.error(request, message or 'Login failed. Please check email and password.')
             else:
-                messages.error(request, f'Error: {message}')
+                # Handles cases like 401, 403, etc.
+                messages.error(request, message or 'Invalid username or password.')
+
         except requests.RequestException as e:
             print(f"Request Exception: {e}")
             messages.error(request, 'There was an error connecting to the login API.')
