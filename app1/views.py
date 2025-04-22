@@ -126,10 +126,10 @@ from django.http import HttpResponse
 
 def employee_info_view(request):
     email = request.session.get('username', 'Guest')
-    tenant_id = 'C01'
+    tenant_id = 'CS000067'
     payload = {
         "data": {
-            "clientId": "C01",
+            "clientId": "CS000067",
             "userId": email,  
             "pageNumber": 1,
             "pageSize": 36,
@@ -207,8 +207,8 @@ def fetch_employee_data(employee_id):
     """ Fetch employee details from API """
     payload = {
         "data": {
-            "clientId": "C01",
-            "userId": "astil.mathew@gmail.com",
+            "clientId": "CS000067",
+            "userId": "mohammed.kamal@foulath.com.bh",
             "searchKey": employee_id
         }
     }
