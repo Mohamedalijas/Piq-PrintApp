@@ -212,7 +212,7 @@ def fetch_employee_data(employee_id):
             "searchKey": employee_id
         }
     }
-    headers = {'Content-Type': 'application/json', 'Tenant-ID': 'C01'}
+    headers = {'Content-Type': 'application/json', 'Tenant-ID': 'CS000067'}
 
     try:
         response = requests.post(
